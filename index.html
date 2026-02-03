@@ -3,8 +3,1122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAP Racing - Dashboard Test</title>
+    <title>PAP Racing Platform - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin
-  
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #C8213E;
+            --color-secondary: #1F3D52;
+            --color-accent: #2BBD66;
+            --color-bg-dark: #0F1419;
+            --color-bg-card: #1A2332;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B0B8C1;
+            --color-border: #2A3F56;
+            --color-success: #2BBD66;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, #2A5073 100%);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-title small {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-greeting {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .btn-logout {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #A01A2F;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(200, 33, 62, 0.3);
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .welcome-section {
+            margin-bottom: 50px;
+            animation: slideInDown 0.6s ease;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+        }
+
+        /* ===== RACE SECTIONS ===== */
+        .races-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+            border-radius: 2px;
+        }
+
+        .races-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        /* ===== RACE CARD ===== */
+        .race-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .race-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+        }
+
+        .race-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 24px rgba(200, 33, 62, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .race-card.registered::before {
+            background: linear-gradient(90deg, var(--color-accent), #1BBD5E);
+        }
+
+        .race-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .status-open {
+            background: rgba(43, 189, 102, 0.2);
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent);
+        }
+
+        .status-closed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
+        }
+
+        .race-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: 12px;
+        }
+
+        .race-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .race-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .race-info-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .race-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #A01A2F;
+            box-shadow: 0 4px 12px rgba(200, 33, 62, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background: var(--color-text-secondary);
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(200, 33, 62, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--color-text-primary);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--color-primary);
+        }
+
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(200, 33, 62, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-error {
+            color: var(--color-error);
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        /* ===== STEPS ===== */
+        .steps-container {
+            margin-bottom: 32px;
+        }
+
+        .steps-progress {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .step-indicator {
+            flex: 1;
+            height: 4px;
+            background: var(--color-border);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-indicator.active {
+            background: var(--color-primary);
+        }
+
+        .step-indicator.completed {
+            background: var(--color-accent);
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .header-user {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .welcome-title {
+                font-size: 24px;
+            }
+
+            .races-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+        }
+
+        /* ===== UTILITIES ===== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 {
+            margin-top: 24px;
+        }
+
+        .mb-2 {
+            margin-bottom: 16px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/0e5392b8-ac86-4f2a-a21e-31665b578079" alt="PAP Logo" class="logo-img">
+                <div class="header-title">
+                    PAP Racing
+                    <small>Piattaforma Iscrizioni Gare</small>
+                </div>
+            </div>
+            <div class="header-user">
+                <div class="user-greeting">
+                    Benvenuto, <span class="user-name" id="userNameHeader">Atleta</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">Esci</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-title">Ciao, <span id="userNameWelcome">Atleta</span>! 👋</div>
+            <div class="welcome-subtitle">Gestisci le tue iscrizioni alle gare in pochi click</div>
+        </div>
+
+        <!-- Open Races Section -->
+        <div class="races-section">
+            <div class="section-title">📋 GARE APERTE</div>
+            <div class="races-grid" id="openRacesGrid">
+                <div class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <div class="empty-state-title">Caricamento in corso...</div>
+                    <div class="empty-state-text">Attendere, stiamo recuperando le gare disponibili</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closed Races Section -->
+        <div class="races-section">
+            <div class="section-title">📊 LE TUE ISCRIZIONI</div>
+            <div class="races-grid" id="registeredRacesGrid">
+                <div class="empty-state">
+                    <div class="empty-state-icon">✨</div>
+                    <div class="empty-state-title">Nessuna iscrizione ancora</div>
+                    <div class="empty-state-text">Iscriviti a una gara per vederla qui</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RACE DETAIL MODAL ===== -->
+    <div class="modal" id="raceDetailModal">
+        <div class="modal-content" style="position: relative;">
+            <button class="modal-close" onclick="closeModal('raceDetailModal')">✕</button>
+            <div class="modal-header">Dettagli Gara</div>
+            
+            <div id="raceDetailContent">
+                <p class="text-center">Caricamento...</p>
+            </div>
+
+            <div class="mt-3">
+                <button class="btn btn-primary" onclick="openRegistrationFlow()" id="btnStartRegistration">
+                    ➕ Iscriviti
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('raceDetailModal')" style="margin-top: 12px;">
+                    Chiudi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REGISTRATION FLOW MODAL ===== -->
+    <div class="modal" id="registrationModal">
+        <div class="modal-content" style="position: relative; max-width: 600px;">
+            <button class="modal-close" onclick="closeModal('registrationModal')">✕</button>
+            
+            <!-- Steps Progress -->
+            <div class="steps-progress">
+                <div class="step-indicator active" id="step1Indicator"></div>
+                <div class="step-indicator" id="step2Indicator"></div>
+                <div class="step-indicator" id="step3Indicator"></div>
+                <div class="step-indicator" id="step4Indicator"></div>
+            </div>
+
+            <!-- STEP 1: Select Events -->
+            <div class="step-content active" id="step1">
+                <div class="modal-header">STEP 1: Seleziona Prove</div>
+                <div id="eventsCheckboxes"></div>
+                <button class="btn btn-primary mt-3" onclick="goToStep(2)">Continua →</button>
+            </div>
+
+            <!-- STEP 2: Enter Times -->
+            <div class="step-content" id="step2">
+                <div class="modal-header">STEP 2: Inserisci Tempi</div>
+                <div id="timesForm"></div>
+                <div class="mt-3" style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="goToStep(1)" style="flex: 1;">← Indietro</button>
+                    <button class="btn btn-primary" onclick="goToStep(3)" style="flex: 1;">Continua →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Add Notes -->
+            <div class="step-content" id="step3">
+                <div class="modal-header">STEP 3: Note Aggiuntive</div>
+                <div class="form-group">
+                    <label class="form-label">Note (opzionali)</label>
+                    <textarea class="form-textarea" id="notesInput" placeholder="Aggiungi eventuali note riguardanti la tua partecipazione..."></textarea>
+                </div>
+                <div class="mt-3" style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="goToStep(2)" style="flex: 1;">← Indietro</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)" style="flex: 1;">Continua →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Summary -->
+            <div class="step-content" id="step4">
+                <div class="modal-header">STEP 4: Riepilogo</div>
+                <div id="summaryContent"></div>
+                <div class="mt-3" style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="goToStep(3)" style="flex: 1;">← Indietro</button>
+                    <button class="btn btn-primary" onclick="confirmRegistration()" style="flex: 1;">✓ Conferma Iscrizione</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REGISTRATION CONFIRMATION MODAL ===== -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+            <div class="modal-header">Iscrizione Confermata!</div>
+            <p style="color: var(--color-text-secondary); margin-bottom: 24px;">
+                La tua iscrizione è stata registrata con successo. Ti abbiamo inviato una email di conferma.
+            </p>
+            <button class="btn btn-primary" onclick="confirmationComplete()" style="width: 100%;">
+                Chiudi
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== SUPABASE CONFIG =====
+        // IMPORTANTE: Sostituisci questi valori con i tuoi
+const SUPABASE_URL = 'https://wxdlzmvpkrifmsbxobsb.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_secret_gy0UinTP9cZIBFnT4rJK5g_hkWWK6Ag';
+
+        let supabase;
+        let currentUser = null;
+        let currentRace = null;
+        let selectedEvents = [];
+        let currentStep = 1;
+
+        // ===== INITIALIZATION =====
+        async function init() {
+            // Initialize Supabase
+            const { createClient } = supabase;
+            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Check if user is logged in
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = '/login';
+                return;
+            }
+
+            currentUser = user;
+            updateUserName(user.email);
+            
+            // Load races
+            await loadRaces();
+        }
+
+        // ===== USER FUNCTIONS =====
+        function updateUserName(email) {
+            const name = email.split('@')[0];
+            document.getElementById('userNameHeader').textContent = name;
+            document.getElementById('userNameWelcome').textContent = name;
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = '/login';
+        }
+
+        // ===== RACE FUNCTIONS =====
+        async function loadRaces() {
+            try {
+                // Fetch all races
+                const { data: races, error } = await supabase
+                    .from('gare')
+                    .select('*')
+                    .order('data_gara', { ascending: true });
+
+                if (error) throw error;
+
+                // Fetch user registrations
+                const { data: registrations } = await supabase
+                    .from('iscrizioni')
+                    .select('gara_id')
+                    .eq('atleta_id', currentUser.id);
+
+                const registeredRaceIds = registrations.map(r => r.gara_id);
+
+                // Separate open and registered races
+                const now = new Date();
+                const openRaces = [];
+                const registeredRaces = [];
+
+                races.forEach(race => {
+                    const isRegistered = registeredRaceIds.includes(race.id);
+                    const isOpen = new Date(race.scadenza_iscrizioni) > now && race.stato === 'aperta';
+
+                    if (isRegistered) {
+                        registeredRaces.push(race);
+                    } else if (isOpen) {
+                        openRaces.push(race);
+                    }
+                });
+
+                // Render races
+                renderRaces(openRaces, 'openRacesGrid');
+                renderRaces(registeredRaces, 'registeredRacesGrid', true);
+
+            } catch (error) {
+                console.error('Error loading races:', error);
+            }
+        }
+
+        function renderRaces(races, gridId, isRegistered = false) {
+            const grid = document.getElementById(gridId);
+            
+            if (races.length === 0) {
+                const message = isRegistered 
+                    ? 'Nessuna iscrizione ancora. Iscriviti a una gara per vederla qui'
+                    : 'Nessuna gara disponibile al momento';
+                const icon = isRegistered ? '✨' : '🏊';
+                
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">${icon}</div>
+                        <div class="empty-state-title">${isRegistered ? 'Nessuna iscrizione' : 'Nessuna gara'}</div>
+                        <div class="empty-state-text">${message}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = races.map(race => `
+                <div class="race-card ${isRegistered ? 'registered' : ''}">
+                    <span class="race-status ${isRegistered ? 'status-closed' : 'status-open'}">
+                        ${isRegistered ? '✓ Iscritto' : 'Aperta'}
+                    </span>
+                    <div class="race-title">${race.nome}</div>
+                    <div class="race-info">
+                        <div class="race-info-item">
+                            <div class="race-info-icon">📅</div>
+                            <div>${formatDate(race.data_gara)}</div>
+                        </div>
+                        <div class="race-info-item">
+                            <div class="race-info-icon">📍</div>
+                            <div>${race.luogo}</div>
+                        </div>
+                        <div class="race-info-item">
+                            <div class="race-info-icon">⏰</div>
+                            <div>Scadenza: ${formatDate(race.scadenza_iscrizioni)}</div>
+                        </div>
+                    </div>
+                    <div class="race-actions">
+                        <button class="btn btn-primary" onclick="openRaceDetail('${race.id}', ${!isRegistered})">
+                            ${isRegistered ? '📋 Vedi iscrizione' : '➕ Iscriviti'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateString) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('it-IT', options);
+        }
+
+        async function openRaceDetail(raceId, canRegister) {
+            try {
+                const { data: race } = await supabase
+                    .from('gare')
+                    .select('*')
+                    .eq('id', raceId)
+                    .single();
+
+                currentRace = race;
+
+                const detailHTML = `
+                    <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
+                        ${race.descrizione}
+                    </p>
+                    <div class="race-info mb-2">
+                        <div class="race-info-item">
+                            <div class="race-info-icon">📅</div>
+                            <div><strong>Data:</strong> ${formatDate(race.data_gara)}</div>
+                        </div>
+                        <div class="race-info-item">
+                            <div class="race-info-icon">📍</div>
+                            <div><strong>Luogo:</strong> ${race.luogo}</div>
+                        </div>
+                        <div class="race-info-item">
+                            <div class="race-info-icon">⏰</div>
+                            <div><strong>Scadenza:</strong> ${formatDate(race.scadenza_iscrizioni)}</div>
+                        </div>
+                    </div>
+                    ${race.pdf_url ? `
+                        <div class="mb-2">
+                            <a href="${race.pdf_url}" target="_blank" class="btn btn-secondary" style="width: 100%;">
+                                📄 Scarica Regolamento
+                            </a>
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('raceDetailContent').innerHTML = detailHTML;
+                document.getElementById('btnStartRegistration').style.display = canRegister ? 'block' : 'none';
+
+                openModal('raceDetailModal');
+            } catch (error) {
+                console.error('Error loading race detail:', error);
+            }
+        }
+
+        async function openRegistrationFlow() {
+            try {
+                const { data: events } = await supabase
+                    .from('prove')
+                    .select('*')
+                    .eq('gara_id', currentRace.id)
+                    .eq('attiva', true);
+
+                const checkboxesHTML = events.map(event => `
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" class="event-checkbox" value="${event.id}" 
+                                   data-stile="${event.stile}" data-distanza="${event.distanza}">
+                            <span>${event.stile}</span>
+                        </label>
+                    </div>
+                `).join('');
+
+                document.getElementById('eventsCheckboxes').innerHTML = checkboxesHTML;
+
+                closeModal('raceDetailModal');
+                currentStep = 1;
+                showStep(1);
+                openModal('registrationModal');
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        // ===== REGISTRATION FLOW =====
+        function goToStep(step) {
+            if (step === 2 && !getSelectedEvents().length) {
+                alert('Seleziona almeno una prova');
+                return;
+            }
+            if (step === 3) {
+                if (!validateTimes()) {
+                    alert('Controlla i tempi inseriti (formato MM:SS.CC)');
+                    return;
+                }
+            }
+            currentStep = step;
+            showStep(step);
+            buildStep2();
+            buildStep4();
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step-indicator').forEach((el, idx) => {
+                el.classList.remove('active');
+                if (idx < step) el.classList.add('completed');
+            });
+
+            // Show current step
+            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById(`step${step}Indicator`).classList.add('active');
+        }
+
+        function getSelectedEvents() {
+            return Array.from(document.querySelectorAll('.event-checkbox:checked')).map(el => ({
+                id: el.value,
+                stile: el.dataset.stile,
+                distanza: el.dataset.distanza
+            }));
+        }
+
+        function buildStep2() {
+            const events = getSelectedEvents();
+            const timesHTML = events.map((event, idx) => `
+                <div class="form-group">
+                    <label class="form-label">${event.stile}</label>
+                    <input type="text" class="form-input time-input" placeholder="MM:SS.CC" 
+                           data-event-id="${event.id}" pattern="^[0-9]{2}:[0-9]{2}\.[0-9]{2}$">
+                    <div class="form-error" id="error-${event.id}">Formato non valido (usa MM:SS.CC)</div>
+                </div>
+            `).join('');
+
+            document.getElementById('timesForm').innerHTML = timesHTML;
+
+            // Add real-time validation
+            document.querySelectorAll('.time-input').forEach(input => {
+                input.addEventListener('blur', validateTimeInput);
+            });
+        }
+
+        function validateTimeInput(e) {
+            const pattern = /^[0-9]{2}:[0-9]{2}\.[0-9]{2}$/;
+            const isValid = pattern.test(e.target.value) || e.target.value === '';
+            const errorEl = document.getElementById(`error-${e.target.dataset.eventId}`);
+            
+            if (!isValid && e.target.value) {
+                errorEl.classList.add('show');
+            } else {
+                errorEl.classList.remove('show');
+            }
+        }
+
+        function validateTimes() {
+            let isValid = true;
+            document.querySelectorAll('.time-input').forEach(input => {
+                const pattern = /^[0-9]{2}:[0-9]{2}\.[0-9]{2}$/;
+                if (input.value && !pattern.test(input.value)) {
+                    isValid = false;
+                }
+            });
+            return isValid;
+        }
+
+        function buildStep4() {
+            const events = getSelectedEvents();
+            const times = {};
+            document.querySelectorAll('.time-input').forEach(input => {
+                times[input.dataset.eventId] = input.value;
+            });
+            const notes = document.getElementById('notesInput').value;
+
+            const summaryHTML = `
+                <div style="background: var(--color-bg-dark); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <p style="margin-bottom: 12px;"><strong>Gara:</strong> ${currentRace.nome}</p>
+                    <p style="margin-bottom: 12px;"><strong>Data:</strong> ${formatDate(currentRace.data_gara)}</p>
+                    <p style="margin-bottom: 12px;"><strong>Luogo:</strong> ${currentRace.luogo}</p>
+                </div>
+                <div style="background: var(--color-bg-dark); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <p style="font-weight: 600; margin-bottom: 12px;">Prove selezionate:</p>
+                    ${events.map(event => `
+                        <div style="padding: 8px 0; border-bottom: 1px solid var(--color-border);">
+                            <div style="font-weight: 500;">${event.stile}</div>
+                            <div style="color: var(--color-text-secondary); font-size: 13px;">
+                                Tempo: ${times[event.id] || '—'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${notes ? `
+                    <div style="background: var(--color-bg-dark); padding: 16px; border-radius: 8px;">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Note:</p>
+                        <p style="color: var(--color-text-secondary);">${notes}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('summaryContent').innerHTML = summaryHTML;
+        }
+
+        async function confirmRegistration() {
+            const events = getSelectedEvents();
+            const times = {};
+            document.querySelectorAll('.time-input').forEach(input => {
+                times[input.dataset.eventId] = input.value;
+            });
+            const notes = document.getElementById('notesInput').value;
+
+            try {
+                // Insert registrations
+                const registrations = events.map(event => ({
+                    atleta_id: currentUser.id,
+                    gara_id: currentRace.id,
+                    prova_id: event.id,
+                    tempo: times[event.id],
+                    note: notes
+                }));
+
+                const { error } = await supabase
+                    .from('iscrizioni')
+                    .insert(registrations);
+
+                if (error) throw error;
+
+                closeModal('registrationModal');
+                openModal('confirmationModal');
+
+            } catch (error) {
+                console.error('Error confirming registration:', error);
+                alert('Errore durante l\'iscrizione. Riprova.');
+            }
+        }
+
+        function confirmationComplete() {
+            closeModal('confirmationModal');
+            loadRaces();
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // ===== START APP =====
+        init();
+    </script>
+</body>
+</html>
+
